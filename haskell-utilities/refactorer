@@ -1,0 +1,33 @@
+#!/bin/ruby
+
+toRefact = Dir["**/*.hs"].sort
+
+puts "Running Stylish on:"
+for file in toRefact do
+  puts "  - #{file}"
+  unless system ("stylish-haskell -i #{file}")
+    exit
+  end
+end
+puts ""
+
+puts "Running HLint on:"
+for file in toRefact do
+  puts "  - #{file}"
+  unless system ("hlint --refactor --refactor-options=\"--inplace\" #{file}")
+    exit
+  end
+end
+puts ""
+
+toDelete = Dir["**/*.orig"].sort
+
+if not toDelete.empty?
+  puts "Removing conflict residual files:"
+  for file in toDelete do
+    puts "  - #{file}"
+    unless system ("rm #{file}")
+      exit
+    end
+  end
+end
